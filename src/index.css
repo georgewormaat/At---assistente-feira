@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-autocorp-blue: #003765;
+  --color-autocorp-black: #080B0D;
+  --color-autocorp-red: #cf2929;
+  
+  --radius-card: 32px;
+}
+
+@layer base {
+  body {
+    @apply bg-zinc-950 text-zinc-50 selection:bg-blue-600 selection:text-white transition-colors duration-300;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-zinc-900/70 border border-zinc-800/50 backdrop-blur-xl shadow-sm rounded-card;
+  }
+  
+  .nav-blur {
+    @apply bg-zinc-950/80 backdrop-blur-md border-t border-zinc-800;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

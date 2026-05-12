@@ -1,0 +1,8 @@
+{
+  "name": "CONAC 2026 - Guia de Elite",
+  "description": "Aplicativo oficial de experiência premium para o 46° CONAC, 38° CONAEC e 31ª ExpoCONAC.",
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": []
+}
