@@ -4,11 +4,8 @@
  */
 
 import { cn } from '../lib/utils';
-import fullLogo from '../assets/logo.png';
-import reducedLogo from '../assets/profile.png';
-
 export function AutocorpLogo({ className, reduced = false }: { className?: string, reduced?: boolean }) {
-  const src = reduced ? reducedLogo : fullLogo;
+  const src = reduced ? "icon.png" : "logo.png";
   
   return (
     <img 

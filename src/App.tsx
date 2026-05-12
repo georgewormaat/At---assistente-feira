@@ -29,7 +29,21 @@ export default function App() {
   const { activeNotification, dismissNotification, testNotification } = useNotifications();
   const [currentView, setCurrentView] = useState<View>('home');
 
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
   useEffect(() => {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      setDeferredPrompt(e);
+    });
+
+    window.addEventListener('appinstalled', () => {
+      setDeferredPrompt(null);
+      console.log('PWA was installed');
+    });
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch(err => {
@@ -38,6 +52,15 @@ export default function App() {
       });
     }
   }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
 
   const navItems = [
     { id: 'home' as View, icon: Home, label: 'Início' },
@@ -71,7 +94,13 @@ export default function App() {
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            {currentView === 'home' && <HomeView onTestNotification={testNotification} />}
+            {currentView === 'home' && (
+              <HomeView 
+                onTestNotification={testNotification} 
+                canInstall={deferredPrompt !== null}
+                onInstall={handleInstallClick}
+              />
+            )}
             {currentView === 'agenda' && <AgendaView />}
             {currentView === 'map' && <MapView />}
             {currentView === 'travel' && <TravelView />}

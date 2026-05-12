@@ -19,10 +19,18 @@ import { cn } from '../lib/utils';
 
 import { AutocorpLogo } from './AutocorpLogo';
 
-export function HomeView({ onTestNotification }: { onTestNotification: () => void }) {
+export function HomeView({ 
+  onTestNotification, 
+  canInstall, 
+  onInstall 
+}: { 
+  onTestNotification: () => void,
+  canInstall?: boolean,
+  onInstall?: () => void
+}) {
   return (
     <div className="flex flex-col gap-12 pb-12">
-      <header className="flex flex-col gap-4">
+      <header className="flex flex-col gap-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -30,6 +38,18 @@ export function HomeView({ onTestNotification }: { onTestNotification: () => voi
         >
           <AutocorpLogo />
         </motion.div>
+
+        {canInstall && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={onInstall}
+            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-blue-600/20 transition-all active:scale-95 mt-4"
+          >
+            <Icons.Download size={20} />
+            Baixar Aplicatvo (Instalar)
+          </motion.button>
+        )}
       </header>
 
       <section className="flex flex-col gap-4">
