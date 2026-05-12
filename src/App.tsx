@@ -13,7 +13,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Home, Calendar, Map, Plane, Sun, Moon, MapPin } from 'lucide-react';
+import { Home, Calendar, Map, Plane, Sun, Moon } from 'lucide-react';
 import { useTheme } from './hooks/useTheme';
 import { useNotifications } from './hooks/useNotifications';
 import { NotificationToast } from './components/NotificationToast';
@@ -26,7 +26,7 @@ type View = 'home' | 'agenda' | 'map' | 'travel';
 
 export default function App() {
   const { theme } = useTheme();
-  const { activeNotification, dismissNotification, testNotification } = useNotifications();
+  const { activeNotification, dismissNotification } = useNotifications();
   const [currentView, setCurrentView] = useState<View>('home');
 
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -46,9 +46,30 @@ export default function App() {
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(err => {
+        navigator.serviceWorker.register('sw.js').then(registration => {
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            if (newWorker) {
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                  // New content is available, force reload
+                  window.location.reload();
+                }
+              });
+            }
+          });
+        }).catch(err => {
           console.log('SW registration failed: ', err);
         });
+      });
+
+      // Handle controller change (e.g. when skipWaiting() is called)
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
       });
     }
   }, []);
@@ -96,7 +117,6 @@ export default function App() {
           >
             {currentView === 'home' && (
               <HomeView 
-                onTestNotification={testNotification} 
                 canInstall={deferredPrompt !== null}
                 onInstall={handleInstallClick}
               />
@@ -150,11 +170,6 @@ export default function App() {
         notification={activeNotification} 
         onDismiss={dismissNotification} 
       />
-      
-      {/* Floating Action Hint */}
-      <div className="fixed bottom-24 right-6 pointer-events-none opacity-20 animate-pulse">
-        <MapPin size={48} className="text-blue-500 rotate-12" />
-      </div>
     </div>
   );
 }

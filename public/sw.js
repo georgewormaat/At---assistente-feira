@@ -1,4 +1,4 @@
-const CACHE_NAME = 'conac-v2';
+const CACHE_NAME = 'conac-v6';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -32,6 +32,30 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+  const url = new URL(event.request.url);
+  
+  // Do not cache the service worker itself
+  if (url.pathname.endsWith('sw.js')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
+  // Network-first for the root and manifest to ensure user gets latest version if online
+  if (url.pathname === '/' || url.pathname.endsWith('index.html') || url.pathname.endsWith('manifest.json')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -48,8 +72,6 @@ self.addEventListener('fetch', (event) => {
         });
         return response;
       });
-    }).catch(() => {
-      // Offline fallback can be added here if needed
     })
   );
 });

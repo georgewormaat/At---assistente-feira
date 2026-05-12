@@ -20,11 +20,9 @@ import { cn } from '../lib/utils';
 import { AutocorpLogo } from './AutocorpLogo';
 
 export function HomeView({ 
-  onTestNotification, 
   canInstall, 
   onInstall 
 }: { 
-  onTestNotification: () => void,
   canInstall?: boolean,
   onInstall?: () => void
 }) {
@@ -47,7 +45,7 @@ export function HomeView({
             className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-2xl shadow-lg shadow-blue-600/20 transition-all active:scale-95 mt-4"
           >
             <Icons.Download size={20} />
-            Baixar Aplicatvo (Instalar)
+            Baixar Aplicativo (Instalar)
           </motion.button>
         )}
       </header>
@@ -68,47 +66,27 @@ export function HomeView({
 
       <section className="flex flex-col gap-4">
         <h3 className="text-lg font-semibold px-1">Lembretes Rápidos</h3>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex-col gap-3">
           {REMINDERS.map((reminder) => {
             const Icon = (Icons as any)[reminder.icon] || Icons.HelpCircle;
             return (
               <motion.div
                 key={reminder.id}
-                whileHover={{ y: -4 }}
-                className="glass-card p-5 flex flex-col gap-3"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass-card p-4 flex gap-4 items-center"
               >
-                <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400">
-                  <Icon size={24} />
+                <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-400 shrink-0">
+                  <Icon size={20} />
                 </div>
-                <div>
-                  <h4 className="font-bold text-zinc-50">{reminder.title}</h4>
-                  <p className="text-xs text-zinc-400 mt-1">{reminder.description}</p>
+                <div className="flex flex-col">
+                  <h4 className="font-bold text-sm text-zinc-100">{reminder.title}</h4>
+                  <p className="text-xs text-zinc-400">{reminder.description}</p>
                 </div>
               </motion.div>
             );
           })}
         </div>
-      </section>
-
-      <section className="flex flex-col gap-4">
-        <div className="flex justify-between items-center px-1">
-          <h3 className="text-lg font-semibold">Configurações</h3>
-        </div>
-        <button
-          onClick={onTestNotification}
-          className="glass-card p-5 flex items-center justify-between group hover:border-autocorp-blue transition-colors"
-        >
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-zinc-800 rounded-xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
-              <Icons.BellRing size={20} />
-            </div>
-            <div className="text-left">
-              <h4 className="font-bold">Testar Notificações</h4>
-              <p className="text-xs text-zinc-400">Simular lembrete de 5 minutos</p>
-            </div>
-          </div>
-          <Icons.ChevronRight className="text-zinc-400" />
-        </button>
       </section>
     </div>
   );
@@ -184,7 +162,7 @@ export function AgendaView() {
               className="flex items-center gap-2 px-4 py-2 bg-autocorp-blue text-white rounded-full text-xs font-bold shadow-lg shadow-autocorp-blue/20 active:scale-95 transition-all"
             >
               <Icons.Target size={14} />
-              Ir para agora
+              Acontecendo agora
             </button>
           </div>
         </div>
